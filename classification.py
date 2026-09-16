@@ -1,10 +1,15 @@
 import pandas as pd
+import matplotlib.pyplot as plt
 #from ydata_profiling import ProfileReport
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from sklearn.svm import SVC
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score,precision_score,recall_score,f1_score,confusion_matrix
+from sklearn.metrics import classification_report
+from sklearn.metrics import ConfusionMatrixDisplay
+
+
 data=pd.read_csv("diabetes.csv")
 
 # print(data.head(10))
@@ -44,7 +49,7 @@ x_test=scaler.transform(x_test) #transform chỉ thỏa nếu đã fit ít nhấ
 
 # Pick model()
 model1= SVC()
-model2=RandomForestClassifier()
+model2=RandomForestClassifier(random_state=100)
 
 # Train the selected model
 model1.fit(x_train,y_train)
@@ -61,24 +66,46 @@ y_val_predict1=model1.predict(x_val)
 y_val_predict2=model2.predict(x_val)
 result=pd.DataFrame({"Actual":y_val.values,"SVC":y_val_predict1,"RandomForestClassifier":y_val_predict2})
 print(result)
-
+#So sánh độ chính xác của 2 model
+print("Tập Test-SVC")
 print(f"Accuracy score:{accuracy_score(y_test,y_predict1)*100}%")
 print(f"Precision score:{precision_score(y_test,y_predict1)*100}%")
 print(f"Recall score:{recall_score(y_test,y_predict1)*100}%")
 print(f"F1 score:{f1_score(y_test,y_predict1)*100}%")
 
-print(confusion_matrix(y_test,y_predict1))
+print("Tập Validation-SVC")
+print("Accuracy:", accuracy_score(y_val, y_val_predict1))
+print("Precision:", precision_score(y_val, y_val_predict1))
+print("Recall:", recall_score(y_val, y_val_predict1))
+print("F1:", f1_score(y_val, y_val_predict1))
+
+print("Tập Test-Random Forest")
+print(f"Accuracy score:{accuracy_score(y_test,y_predict2)*100}%")
+print(f"Precision score:{precision_score(y_test,y_predict2)*100}%")
+print(f"Recall score:{recall_score(y_test,y_predict2)*100}%")
+print(f"F1 score:{f1_score(y_test,y_predict2)*100}%")
+
+print("Tâp Validation-Random Forest")
+print("Accuracy:", accuracy_score(y_val, y_val_predict2))
+print("Precision:", precision_score(y_val, y_val_predict2))
+print("Recall:", recall_score(y_val, y_val_predict2))
+print("F1:", f1_score(y_val, y_val_predict2))
+
+
+ConfusionMatrixDisplay.from_predictions(y_test,y_predict1)
+plt.title("SCV confusion matrix")
+plt.show()
 cm = confusion_matrix(y_test, y_predict1)
-print("TN =", cm[0, 0])
-print("FP =", cm[0, 1])
-print("FN =", cm[1, 0])
-print("TP =", cm[1, 1])
+print("TN-Số lượng người không bị bệnh và model đoán đúng là không bị bệnh=", cm[0, 0])
+print("FP-Số lượng người không mắc bệnh nhưng mô hình dự đoán có bệnh =", cm[0, 1])
+print("FN-Số lượng người mắc bệnh nhưng mô hình dự đoán không có bệnh =", cm[1, 0])
+print("TP-Số lượng người mắc bệnh và model đoán đúng là có bệnh =", cm[1, 1])
 print(confusion_matrix(y_test,y_predict2))
 cm = confusion_matrix(y_test, y_predict2)
-print("TN =", cm[0, 0])
-print("FP =", cm[0, 1])
-print("FN =", cm[1, 0])
-print("TP =", cm[1, 1])
+print("TN-Số lượng người không bị bệnh và model đoán đúng là không bị bệnh=", cm[0, 0])
+print("FP-Số lượng người không mắc bệnh nhưng mô hình dự đoán có bệnh =", cm[0, 1])
+print("FN-Số lượng người mắc bệnh nhưng mô hình dự đoán không có bệnh =", cm[1, 0])
+print("TP-Số lượng người mắc bệnh và model đoán đúng là có bệnh =", cm[1, 1])
 
 
 
