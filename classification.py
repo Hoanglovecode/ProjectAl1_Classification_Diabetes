@@ -1,6 +1,6 @@
 import pandas as pd
 import matplotlib.pyplot as plt
-from ydata_profiling import ProfileReport
+# from ydata_profiling import ProfileReport
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from sklearn.svm import SVC
@@ -16,8 +16,8 @@ data=pd.read_csv("diabetes.csv")
 # print(data.info())
 # stats =(data.describe())
 
-profile= ProfileReport(data,title="Diabetes report",explorative=True)
-profile.to_file("Diabetes_report.html")
+# profile= ProfileReport(data,title="Diabetes report",explorative=True)
+# profile.to_file("Diabetes_report.html")
 
 target="Outcome"
 x= data.drop(target,axis=1)
