@@ -33,19 +33,17 @@ Dự án triển khai quy trình chuẩn trong Khoa học dữ liệu và Học 
 ```plaintext
 ProjectAl1_Classification_Diabetes/
 ├── diabetes.csv                       # Tập dữ liệu 800 ca lâm sàng (chuẩn Pima + mở rộng)
-├── diabetes_original_29.csv           # Bản lưu trữ 29 ca ban đầu
 ├── classification.py                  # Script Python thực thi toàn bộ pipeline ML
 ├── classification_with_markdown.ipynb # Jupyter Notebook phân tích trực quan theo từng bước
-├── diabetes_report.html               # Báo cáo EDA tương tác sinh bởi ydata-profiling
+├── diabetes_report.html               # Báo cáo EDA tương tác tự động cho 800 mẫu sinh bởi ydata-profiling
 └── README.md                          # Tài liệu hướng dẫn và báo cáo dự án
 ```
 
 ### Chi tiết các file:
-- **`diabetes.csv`**: Bộ dữ liệu gồm **800 bệnh nhân** (768 ca lâm sàng thực tế từ bộ dữ liệu chuẩn quốc tế Pima Indians Diabetes của Viện NIDDK + 32 ca giả lập bảo toàn đặc tính y khoa).
-- **`diabetes_original_29.csv`**: Bản sao lưu 29 bệnh nhân ban đầu để tiện đối chiếu.
-- **`classification.py`**: Mã nguồn độc lập, chạy trực tiếp từ terminal để huấn luyện trên toàn bộ 800 mẫu, in báo cáo chỉ số và hiển thị ma trận nhầm lẫn qua `matplotlib`.
-- **`classification_with_markdown.ipynb`**: Notebook chi tiết, chia rõ các bước: Load data, EDA, Data splitting, Preprocessing, Model training, Validation & Test evaluation, So sánh mô hình.
-- **`diabetes_report.html`**: Báo cáo tổng thể về phân phối, tương quan giữa các biến, giá trị khuyết và cảnh báo ngoại lai dạng web HTML tương tác.
+- **`diabetes.csv`**: Bộ dữ liệu gồm **800 bệnh nhân** (768 ca lâm sàng thực tế từ bộ dữ liệu chuẩn quốc tế Pima Indians Diabetes của Viện NIDDK kết hợp 32 ca giả lập bảo toàn đặc tính y khoa).
+- **`classification.py`**: Mã nguồn độc lập, chạy trực tiếp từ terminal để huấn luyện trên 800 mẫu, in báo cáo chỉ số và hiển thị ma trận nhầm lẫn qua `matplotlib`.
+- **`classification_with_markdown.ipynb`**: Notebook chi tiết chia theo từng bước: Load data, EDA, Data splitting, Preprocessing, Model training, Validation & Test evaluation, So sánh mô hình.
+- **`diabetes_report.html`**: Báo cáo tổng thể tương tác về phân phối dữ liệu 800 ca, tương quan giữa các biến, phân tích giá trị khuyết và cảnh báo ngoại lai.
 
 ---
 
@@ -107,12 +105,19 @@ $$z = \frac{x - \mu}{\sigma}$$
 
 ## 5. Kết Quả Thực Nghiệm & So Sánh (Trên Bộ Dữ Liệu 800 Mẫu)
 
-### 1. Bảng so sánh hiệu năng trên Tập Test (Test Set - 160 bệnh nhân)
+### 1. Bảng so sánh hiệu năng trên Tập Test & Validation (Mỗi tập 160 bệnh nhân)
 
+#### 🔹 Tập Kiểm Thử (Test Set):
 | Mô hình | Accuracy | Precision | Recall | F1-Score |
 | :--- | :---: | :---: | :---: | :---: |
 | **SVC (Support Vector Classifier)** | 70.63% | 54.55% | 47.06% | 50.53% |
 | **Random Forest Classifier** | **76.88%** | **68.42%** | **50.98%** | **58.43%** |
+
+#### 🔹 Tập Kiểm Định (Validation Set):
+| Mô hình | Accuracy | Precision | Recall | F1-Score |
+| :--- | :---: | :---: | :---: | :---: |
+| **SVC (Support Vector Classifier)** | **81.25%** | **88.64%** | **60.94%** | **72.22%** |
+| **Random Forest Classifier** | 78.13% | 79.59% | **60.94%** | 69.03% |
 
 ### 2. Chi tiết Ma trận nhầm lẫn trên Test Set (160 bệnh nhân: 109 âm tính, 51 dương tính)
 
@@ -129,8 +134,9 @@ $$z = \frac{x - \mu}{\sigma}$$
 - **True Positive (TP)**: `26` (Có bệnh, dự đoán chính xác)
 
 ### 3. Nhận xét Y khoa & Học máy:
-- Khi quy mô dữ liệu mở rộng lên **800 bệnh nhân**, **Random Forest** thể hiện khả năng khái quát hóa vượt trội hơn SVC với độ chính xác tổng thể đạt **76.88%** (so với 70.63% của SVC) và F1-Score đạt **58.43%**.
-- Do đặc tính dữ liệu y tế thực tế có nhiều trường hợp đường biên phức tạp và mất cân bằng nhẹ (~35% ca dương tính), mô hình cần tiếp tục được tinh chỉnh ngưỡng xác suất (Decision Threshold Tuning) hoặc kỹ thuật tái cân bằng (như SMOTE / Class Weights) để nâng cao chỉ số **Recall** trong phát hiện bệnh nhân tiểu đường.
+- Khi quy mô dữ liệu mở rộng lên **800 bệnh nhân**, **Random Forest** thể hiện khả năng khái quát hóa tốt hơn trên tập Test với độ chính xác tổng thể đạt **76.88%** (so với 70.63% của SVC) và F1-Score đạt **58.43%**.
+- Trên tập Validation, **SVC** lại có độ chính xác cao đạt **81.25%** và Precision ấn tượng **88.64%**.
+- Do đặc tính dữ liệu y tế có đường biên quyết định phức tạp và mất cân bằng nhẹ (~35% ca dương tính), mô hình cần tiếp tục được tinh chỉnh ngưỡng xác suất (Decision Threshold Tuning) hoặc kỹ thuật tái cân bằng (như SMOTE / Class Weights) để nâng cao chỉ số **Recall** trong phát hiện bệnh nhân tiểu đường.
 
 ---
 
